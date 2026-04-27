@@ -21,7 +21,8 @@ import {
 import artist from "./assets/artist.png";
 import logo from "./assets/logo.png";
 import map from "./assets/map.png";
-import tattoo from "./assets/tattoo-1.png";
+import tattoo1 from "./assets/tattoo-1.png";
+import tattoo2 from "./assets/tattoo-2.png";
 
 const drawerItem = tv({
   base: "flex h-12 items-center gap-4 rounded-lg px-4 text-[16px] font-semibold text-studio-muted transition hover:bg-white/5 hover:text-white",
@@ -61,6 +62,11 @@ const reportItems = [
   { label: "Sessões realizadas", value: "120+" },
   { label: "Projetos autorais", value: "68" },
   { label: "Tempo médio de resposta", value: "1 dia" },
+];
+
+const tattooImages = [
+  { src: tattoo1, alt: "Tatuagem autoral no braço" },
+  { src: tattoo2, alt: "Tatuagem autoral em estilo blackwork" },
 ];
 
 function Sidebar({
@@ -163,7 +169,21 @@ function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
   const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [selectedTattooIndex, setSelectedTattooIndex] = useState(0);
   const isDarkTheme = theme === "dark";
+  const selectedTattoo = tattooImages[selectedTattooIndex];
+
+  function showPreviousTattoo() {
+    setSelectedTattooIndex((current) =>
+      current === 0 ? tattooImages.length - 1 : current - 1,
+    );
+  }
+
+  function showNextTattoo() {
+    setSelectedTattooIndex((current) =>
+      current === tattooImages.length - 1 ? 0 : current + 1,
+    );
+  }
 
   return (
     <main
@@ -284,22 +304,42 @@ function App() {
               <div className="mt-7 grid gap-5 md:grid-cols-2 lg:mt-0">
                 <div className="relative min-h-[360px] overflow-hidden rounded-lg md:min-h-[460px]">
                   <img
-                    src={tattoo}
-                    alt="Tatuagem autoral no braço"
-                    className="h-full w-full object-cover"
+                    src={selectedTattoo.src}
+                    alt={selectedTattoo.alt}
+                    className="h-full w-full object-cover transition-opacity duration-300"
                   />
                   <button
                     className="absolute left-3 top-1/2 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full bg-white/65 text-zinc-700"
                     aria-label="Tatuagem anterior"
+                    onClick={showPreviousTattoo}
+                    type="button"
                   >
                     <span className="h-0 w-0 border-y-[7px] border-r-[9px] border-y-transparent border-r-zinc-700" />
                   </button>
                   <button
                     className="absolute right-3 top-1/2 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full bg-white/65 text-zinc-700"
                     aria-label="Próxima tatuagem"
+                    onClick={showNextTattoo}
+                    type="button"
                   >
                     <span className="h-0 w-0 border-y-[7px] border-l-[9px] border-y-transparent border-l-zinc-700" />
                   </button>
+                  <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2">
+                    {tattooImages.map((image, index) => (
+                      <button
+                        className={`h-2.5 rounded-full transition-all ${
+                          selectedTattooIndex === index
+                            ? "w-6 bg-white"
+                            : "w-2.5 bg-white/55"
+                        }`}
+                        key={image.src}
+                        aria-label={`Mostrar tatuagem ${index + 1}`}
+                        aria-pressed={selectedTattooIndex === index}
+                        onClick={() => setSelectedTattooIndex(index)}
+                        type="button"
+                      />
+                    ))}
+                  </div>
                 </div>
 
                 <div className="grid gap-4">
