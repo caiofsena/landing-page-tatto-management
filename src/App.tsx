@@ -3,13 +3,20 @@ import { tv } from "tailwind-variants";
 import {
   Bell,
   Box,
+  CalendarDays,
+  CheckCircle2,
+  ClipboardList,
   FileText,
   Home,
   Layers,
   Menu,
   Moon,
+  PanelLeftClose,
+  PanelLeftOpen,
   Search,
+  ShieldCheck,
   SlidersHorizontal,
+  Sparkles,
   X,
 } from "lucide-react";
 import artist from "./assets/artist.png";
@@ -19,186 +26,426 @@ import tattoo from "./assets/tattoo.png";
 
 const iconButton = tv({
   base: "grid h-11 w-11 place-items-center text-white transition hover:text-zinc-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white",
-  variants: {
-    ghost: {
-      true: "bg-transparent",
-    },
-  },
-  defaultVariants: {
-    ghost: true,
-  },
 });
 
 const drawerItem = tv({
   base: "flex h-12 items-center gap-4 rounded-lg px-4 text-[16px] font-semibold text-studio-muted transition hover:bg-white/5 hover:text-white",
 });
 
+const sectionTitle = tv({
+  base: "text-3xl font-bold leading-tight text-white md:text-4xl",
+});
+
+const featureCard = tv({
+  base: "rounded-lg border border-white/10 bg-white/[0.06] p-5 shadow-xl shadow-black/20 backdrop-blur",
+});
+
 const menuItems = [
-  { label: "Portifólio", icon: Home },
-  { label: "Artes Autorais", icon: Box },
-  { label: "Orçamento", icon: FileText },
-  { label: "Cuidados Tattoo", icon: Layers },
-  { label: "Reporting", icon: SlidersHorizontal },
+  { label: "Portifólio", href: "#portfolio", icon: Home },
+  { label: "Artes Autorais", href: "#artes-autorais", icon: Box },
+  { label: "Orçamento", href: "#orcamento", icon: FileText },
+  { label: "Cuidados Tattoo", href: "#cuidados", icon: Layers },
+  { label: "Reporting", href: "#reporting", icon: SlidersHorizontal },
 ];
+
+const portfolioItems = [
+  "Blackwork com contraste alto",
+  "Engraving inspirado em gravura",
+  "Cartoon com personalidade",
+  "Projetos delicados sob medida",
+];
+
+const careSteps = [
+  "Higienizar com sabonete neutro",
+  "Evitar sol, piscina e atrito nos primeiros dias",
+  "Hidratar conforme orientação do atendimento",
+  "Enviar foto da cicatrização para acompanhamento",
+];
+
+const reportItems = [
+  { label: "Sessões realizadas", value: "120+" },
+  { label: "Projetos autorais", value: "68" },
+  { label: "Tempo médio de resposta", value: "1 dia" },
+];
+
+function Sidebar({
+  drawerOpen,
+  expanded,
+  onClose,
+  onToggleExpanded,
+}: {
+  drawerOpen: boolean;
+  expanded: boolean;
+  onClose: () => void;
+  onToggleExpanded: () => void;
+}) {
+  return (
+    <aside
+      className={`fixed left-1/2 top-0 z-40 h-screen w-full max-w-[430px] -translate-x-1/2 transition-[width,transform] duration-300 lg:relative lg:left-auto lg:top-auto lg:z-auto lg:block lg:h-auto lg:max-w-none lg:translate-x-0 ${
+        drawerOpen ? "pointer-events-auto" : "pointer-events-none lg:pointer-events-auto"
+      } ${expanded ? "lg:w-[315px]" : "lg:w-[84px]"}`}
+    >
+      <button
+        className={`absolute inset-0 bg-black/45 transition-opacity lg:hidden ${
+          drawerOpen ? "opacity-100" : "opacity-0"
+        }`}
+        aria-label="Fechar menu"
+        onClick={onClose}
+      />
+      <nav
+        className={`relative flex h-full w-[79%] max-w-[315px] flex-col bg-studio-panel px-5 py-3 shadow-drawer transition-[width,transform,padding] duration-300 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 lg:shadow-none ${
+          drawerOpen ? "translate-x-0" : "-translate-x-full"
+        } ${expanded ? "lg:w-[315px]" : "lg:w-[84px]"}`}
+        aria-label="Menu principal"
+      >
+        <div className="mb-6 flex h-12 items-center justify-between">
+          <a
+            className={`flex min-w-0 items-center gap-3 ${
+              expanded ? "" : "lg:justify-center"
+            }`}
+            href="#inicio"
+            onClick={onClose}
+            aria-label="FloresLD"
+          >
+            <img src={logo} alt="FloresLD" className="h-11 w-11" />
+            <span
+              className={`text-[24px] font-bold text-white transition lg:whitespace-nowrap ${
+                expanded ? "lg:opacity-100" : "lg:hidden lg:opacity-0"
+              }`}
+            >
+              FloresLD
+            </span>
+          </a>
+          <button
+            className="grid h-10 w-10 place-items-center text-zinc-400 lg:hidden"
+            aria-label="Fechar menu"
+            onClick={onClose}
+          >
+            <X size={25} />
+          </button>
+          <button
+            className="hidden h-10 w-10 shrink-0 place-items-center rounded-lg text-zinc-400 transition hover:bg-white/5 hover:text-white lg:grid"
+            aria-label={expanded ? "Recolher menu" : "Expandir menu"}
+            onClick={onToggleExpanded}
+          >
+            {expanded ? <PanelLeftClose size={23} /> : <PanelLeftOpen size={23} />}
+          </button>
+        </div>
+
+        <label
+          className={`mb-8 flex h-[54px] items-center gap-4 rounded-lg bg-zinc-800 px-4 text-zinc-400 transition ${
+            expanded ? "" : "lg:justify-center lg:px-0"
+          }`}
+        >
+          <Search size={23} className="text-white" />
+          <input
+            className={`min-w-0 flex-1 bg-transparent text-[16px] font-semibold outline-none placeholder:text-zinc-400 ${
+              expanded ? "" : "lg:hidden"
+            }`}
+            placeholder="Search"
+            type="search"
+          />
+        </label>
+
+        <div className="space-y-4">
+          {menuItems.map(({ label, href, icon: Icon }) => (
+            <a
+              className={`${drawerItem()} ${expanded ? "" : "lg:justify-center lg:px-0"}`}
+              href={href}
+              key={label}
+              onClick={onClose}
+              title={label}
+              aria-label={label}
+            >
+              <Icon size={22} className="text-white" />
+              <span className={expanded ? "" : "lg:hidden"}>{label}</span>
+            </a>
+          ))}
+        </div>
+
+        <a
+          className={`${drawerItem()} mt-auto mb-6 ${expanded ? "" : "lg:justify-center lg:px-0"}`}
+          href="https://wa.me/5516999999999"
+          target="_blank"
+          rel="noreferrer"
+          title="WhatsApp Business"
+          aria-label="WhatsApp Business"
+        >
+          <Bell size={22} className="text-white" />
+          <span className={expanded ? "" : "lg:hidden"}>WhatsApp Business</span>
+        </a>
+      </nav>
+    </aside>
+  );
+}
 
 function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [sidebarExpanded, setSidebarExpanded] = useState(true);
 
   return (
     <main className="min-h-screen bg-zinc-950 text-studio-ink">
-      <section className="mx-auto min-h-screen w-full max-w-[430px] overflow-hidden bg-[radial-gradient(circle_at_20%_27%,rgba(38,103,24,0.5),transparent_17rem),linear-gradient(180deg,#000_0%,#000_16%,#002f08_100%)] shadow-2xl">
-        <header className="relative z-30 flex h-[58px] items-center justify-between px-4">
-          <button
-            className={iconButton()}
-            aria-label="Abrir menu"
-            onClick={() => setDrawerOpen(true)}
-          >
-            <Menu size={28} strokeWidth={2.1} />
-          </button>
+      <section
+        className="min-h-screen w-full overflow-hidden bg-[radial-gradient(circle_at_16%_18%,rgba(38,103,24,0.55),transparent_22rem),radial-gradient(circle_at_84%_55%,rgba(28,95,24,0.25),transparent_26rem),linear-gradient(180deg,#000_0%,#000_18%,#002f08_100%)] shadow-2xl lg:grid lg:transition-[grid-template-columns] lg:duration-300"
+        style={{
+          gridTemplateColumns: sidebarExpanded
+            ? "315px minmax(0, 1fr)"
+            : "84px minmax(0, 1fr)",
+        }}
+      >
+        <Sidebar
+          drawerOpen={drawerOpen}
+          expanded={sidebarExpanded}
+          onClose={() => setDrawerOpen(false)}
+          onToggleExpanded={() => setSidebarExpanded((current) => !current)}
+        />
 
-          <button
-            className="relative h-7 w-[58px] rounded-full bg-zinc-600 pr-1 shadow-inner"
-            aria-label="Alternar tema"
-          >
-            <span className="grid h-7 w-7 place-items-center rounded-full bg-white text-zinc-950 shadow">
-              <Moon size={15} />
-            </span>
-          </button>
+        <div className="min-w-0">
+          <header className="relative z-30 flex h-[58px] items-center justify-between px-4 lg:hidden">
+            <button
+              className={iconButton()}
+              aria-label="Abrir menu"
+              onClick={() => setDrawerOpen(true)}
+            >
+              <Menu size={28} strokeWidth={2.1} />
+            </button>
 
-          <button className={iconButton()} aria-label="Pesquisar">
-            <Search size={31} strokeWidth={2.4} />
-          </button>
-        </header>
+            <button
+              className="relative h-7 w-[58px] rounded-full bg-zinc-600 pr-1 shadow-inner"
+              aria-label="Alternar tema"
+            >
+              <span className="grid h-7 w-7 place-items-center rounded-full bg-white text-zinc-950 shadow">
+                <Moon size={15} />
+              </span>
+            </button>
 
-        <article className="relative px-5 pb-12 pt-1">
-          <img
-            src={logo}
-            alt=""
-            className="pointer-events-none absolute left-2 top-[145px] h-[178px] w-[178px] select-none opacity-40 mix-blend-screen"
-          />
+            <button className={iconButton()} aria-label="Pesquisar">
+              <Search size={31} strokeWidth={2.4} />
+            </button>
+          </header>
 
-          <div className="grid grid-cols-[1.02fr_0.98fr] gap-x-4 gap-y-9">
-            <section className="relative z-10 col-span-1">
-              <h1 className="mb-3 pl-9 text-[19px] font-bold leading-tight">
-                Sobre mim:
-              </h1>
-              <p className="text-[15.5px] font-normal leading-[1.08] text-white">
-                Olá, sou a <strong>FloresLD</strong>, uma tatuadora que
-                transforma ideias em arte! Com 4 anos de experiência, trabalho
-                com uma variedade de estilos, mas minha paixão ronda entre o
-                engraving/blackworks ao cartoon.
-                <br />
-                Atuo em <strong>São Carlos - SP</strong> na{" "}
-                <strong>LaMonstera Ateliê</strong>, onde todos são bem vindos e
-                muito bem acolhides, um espaço de arte, cultura, respeito e
-                carinho. Com foco em <strong>trabalhos únicos e autorais.</strong>
-              </p>
-            </section>
-
+          <article className="relative px-5 pb-16 pt-1 lg:px-12 lg:py-10 xl:px-16">
             <img
-              src={artist}
-              alt="FloresLD tatuando no estúdio"
-              className="relative z-10 mt-10 h-[268px] w-full rounded-lg object-cover"
+              src={logo}
+              alt=""
+              className="pointer-events-none absolute left-2 top-[145px] h-[178px] w-[178px] select-none opacity-40 mix-blend-screen lg:left-12 lg:top-24 lg:h-[260px] lg:w-[260px]"
             />
 
-            <div className="relative z-10">
-              <div className="relative h-[290px] overflow-hidden rounded-lg">
-                <img
-                  src={tattoo}
-                  alt="Tatuagem autoral no braço"
-                  className="h-full w-full object-cover"
-                />
-                <button
-                  className="absolute left-2 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full bg-white/60 text-zinc-700"
-                  aria-label="Tatuagem anterior"
-                >
-                  <span className="h-0 w-0 border-y-[7px] border-r-[9px] border-y-transparent border-r-zinc-700" />
-                </button>
-                <button
-                  className="absolute right-2 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full bg-white/60 text-zinc-700"
-                  aria-label="Próxima tatuagem"
-                >
-                  <span className="h-0 w-0 border-y-[7px] border-l-[9px] border-y-transparent border-l-zinc-700" />
-                </button>
+            <section
+              id="inicio"
+              className="relative z-10 grid gap-8 lg:min-h-[620px] lg:grid-cols-[minmax(0,1fr)_390px] lg:items-center"
+            >
+              <div className="max-w-2xl">
+                <p className="mb-3 text-sm font-bold uppercase tracking-[0.18em] text-lime-300">
+                  São Carlos - SP
+                </p>
+                <h1 className="mb-5 text-[19px] font-bold leading-tight text-white lg:text-6xl">
+                  FloresLD
+                </h1>
+                <p className="max-w-xl text-[15.5px] leading-[1.08] text-white lg:text-xl lg:leading-8">
+                  Olá, sou a <strong>FloresLD</strong>, uma tatuadora que
+                  transforma ideias em arte. Com 4 anos de experiência, trabalho
+                  com estilos como engraving, blackwork e cartoon, sempre com
+                  foco em <strong>trabalhos únicos e autorais.</strong>
+                </p>
+                <div className="mt-7 flex flex-wrap gap-3">
+                  <a
+                    href="#orcamento"
+                    className="inline-flex h-11 items-center gap-2 rounded-lg bg-white px-5 text-sm font-bold text-zinc-950 transition hover:bg-lime-100"
+                  >
+                    <CalendarDays size={18} />
+                    Orçamento
+                  </a>
+                  <a
+                    href="#portfolio"
+                    className="inline-flex h-11 items-center gap-2 rounded-lg border border-white/20 px-5 text-sm font-bold text-white transition hover:bg-white/10"
+                  >
+                    <Sparkles size={18} />
+                    Ver portifólio
+                  </a>
+                </div>
               </div>
-            </div>
 
-            <section className="relative z-10">
-              <h2 className="mb-4 text-[19px] font-bold leading-tight">
-                Local de
-                <br />
-                atendimento:
-              </h2>
-              <p className="mb-3 text-[16px] leading-tight">LaMonstera Ateliê</p>
-              <p className="mb-5 text-[15px] leading-tight">
-                Avenida Liberdade, 70 - Jd. Nova Santa Paula, São Carlos - SP
-              </p>
               <img
-                src={map}
-                alt="Mapa do endereço LaMonstera Ateliê"
-                className="h-[140px] w-full rounded-sm object-cover"
+                src={artist}
+                alt="FloresLD tatuando no estúdio"
+                className="h-[268px] w-full rounded-lg object-cover lg:h-[520px]"
               />
             </section>
-          </div>
-        </article>
 
-        <aside
-          className={`fixed left-1/2 top-0 z-40 h-screen w-full max-w-[430px] -translate-x-1/2 transition ${
-            drawerOpen ? "pointer-events-auto" : "pointer-events-none"
-          }`}
-          aria-hidden={!drawerOpen}
-        >
-          <button
-            className={`absolute inset-0 bg-black/45 transition-opacity ${
-              drawerOpen ? "opacity-100" : "opacity-0"
-            }`}
-            aria-label="Fechar menu"
-            onClick={() => setDrawerOpen(false)}
-          />
-          <nav
-            className={`relative flex h-full w-[79%] max-w-[315px] flex-col bg-studio-panel px-5 py-3 shadow-drawer transition-transform duration-300 ${
-              drawerOpen ? "translate-x-0" : "-translate-x-full"
-            }`}
-            aria-label="Menu principal"
-          >
-            <div className="mb-6 flex h-12 items-center justify-between">
-              <div className="flex items-center gap-3">
-                <img src={logo} alt="FloresLD" className="h-11 w-11" />
-                <span className="text-[24px] font-bold text-white">FloresLD</span>
+            <section
+              id="portfolio"
+              className="relative z-10 scroll-mt-8 pt-14 lg:grid lg:grid-cols-[360px_minmax(0,1fr)] lg:gap-12 lg:pt-20"
+            >
+              <div>
+                <h2 className={sectionTitle()}>Portifólio</h2>
+                <p className="mt-4 max-w-sm text-base leading-7 text-zinc-200">
+                  Uma seleção de trabalhos que mostra variedade de traço,
+                  contraste e acabamento para diferentes ideias de tatuagem.
+                </p>
               </div>
-              <button
-                className="grid h-10 w-10 place-items-center text-zinc-400"
-                aria-label="Fechar menu"
-                onClick={() => setDrawerOpen(false)}
-              >
-                <X size={25} />
-              </button>
-            </div>
 
-            <label className="mb-8 flex h-[54px] items-center gap-4 rounded-lg bg-zinc-800 px-4 text-zinc-400">
-              <Search size={23} className="text-white" />
-              <input
-                className="min-w-0 flex-1 bg-transparent text-[16px] font-semibold outline-none placeholder:text-zinc-400"
-                placeholder="Search"
-                type="search"
-              />
-            </label>
+              <div className="mt-7 grid gap-5 md:grid-cols-2 lg:mt-0">
+                <div className="relative min-h-[360px] overflow-hidden rounded-lg md:min-h-[460px]">
+                  <img
+                    src={tattoo}
+                    alt="Tatuagem autoral no braço"
+                    className="h-full w-full object-cover"
+                  />
+                  <button
+                    className="absolute left-3 top-1/2 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full bg-white/65 text-zinc-700"
+                    aria-label="Tatuagem anterior"
+                  >
+                    <span className="h-0 w-0 border-y-[7px] border-r-[9px] border-y-transparent border-r-zinc-700" />
+                  </button>
+                  <button
+                    className="absolute right-3 top-1/2 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full bg-white/65 text-zinc-700"
+                    aria-label="Próxima tatuagem"
+                  >
+                    <span className="h-0 w-0 border-y-[7px] border-l-[9px] border-y-transparent border-l-zinc-700" />
+                  </button>
+                </div>
 
-            <div className="space-y-4">
-              {menuItems.map(({ label, icon: Icon }) => (
-                <a className={drawerItem()} href="#" key={label}>
-                  <Icon size={22} className="text-white" />
-                  {label}
-                </a>
-              ))}
-            </div>
+                <div className="grid gap-4">
+                  {portfolioItems.map((item) => (
+                    <div className={featureCard()} key={item}>
+                      <CheckCircle2 className="mb-4 text-lime-300" size={25} />
+                      <h3 className="text-xl font-bold text-white">{item}</h3>
+                      <p className="mt-3 text-sm leading-6 text-zinc-300">
+                        Composição pensada para encaixe no corpo, leitura do
+                        desenho e cicatrização consistente.
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
 
-            <a className={`${drawerItem()} mt-auto mb-6`} href="#">
-              <Bell size={22} className="text-white" />
-              WhatsApp Business
-            </a>
-          </nav>
-        </aside>
+            <section
+              id="artes-autorais"
+              className="relative z-10 scroll-mt-8 pt-14 lg:pt-20"
+            >
+              <div className="grid gap-7 lg:grid-cols-[minmax(0,1fr)_430px] lg:items-start">
+                <div>
+                  <h2 className={sectionTitle()}>Artes Autorais</h2>
+                  <p className="mt-4 max-w-2xl text-base leading-7 text-zinc-200">
+                    Projetos criados a partir do repertório visual da artista,
+                    com espaço para adaptar tema, tamanho e local do corpo sem
+                    perder identidade.
+                  </p>
+                </div>
+                <div className={featureCard()}>
+                  <Sparkles className="mb-4 text-lime-300" size={28} />
+                  <h3 className="text-2xl font-bold text-white">
+                    Desenho com assinatura visual
+                  </h3>
+                  <p className="mt-3 leading-7 text-zinc-300">
+                    A proposta nasce de referências, briefing e disponibilidade
+                    de agenda, resultando em uma arte exclusiva para cada pele.
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            <section
+              id="orcamento"
+              className="relative z-10 scroll-mt-8 pt-14 lg:pt-20"
+            >
+              <div className="grid gap-7 lg:grid-cols-[390px_minmax(0,1fr)]">
+                <div>
+                  <h2 className={sectionTitle()}>Orçamento</h2>
+                  <p className="mt-4 text-base leading-7 text-zinc-200">
+                    Para pedir valores, envie ideia, referências, tamanho
+                    aproximado, região do corpo e disponibilidade de datas.
+                  </p>
+                </div>
+                <div className="grid gap-4 md:grid-cols-3">
+                  {["Briefing", "Tamanho", "Agenda"].map((item, index) => (
+                    <div className={featureCard()} key={item}>
+                      <ClipboardList className="mb-4 text-lime-300" size={27} />
+                      <span className="text-sm font-bold text-zinc-400">
+                        0{index + 1}
+                      </span>
+                      <h3 className="mt-2 text-xl font-bold text-white">
+                        {item}
+                      </h3>
+                      <p className="mt-3 text-sm leading-6 text-zinc-300">
+                        Etapa essencial para alinhar expectativa, complexidade e
+                        tempo de sessão.
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            <section
+              id="cuidados"
+              className="relative z-10 scroll-mt-8 pt-14 lg:pt-20"
+            >
+              <div className="grid gap-7 lg:grid-cols-[minmax(0,1fr)_360px]">
+                <div>
+                  <h2 className={sectionTitle()}>Cuidados Tattoo</h2>
+                  <div className="mt-6 grid gap-3 md:grid-cols-2">
+                    {careSteps.map((step) => (
+                      <div
+                        className="flex items-start gap-3 rounded-lg border border-white/10 bg-black/25 p-4"
+                        key={step}
+                      >
+                        <ShieldCheck
+                          className="mt-0.5 shrink-0 text-lime-300"
+                          size={22}
+                        />
+                        <p className="text-sm leading-6 text-zinc-200">{step}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className={featureCard()}>
+                  <h3 className="text-2xl font-bold text-white">
+                    Local de atendimento
+                  </h3>
+                  <p className="mt-4 text-base leading-7 text-zinc-200">
+                    LaMonstera Ateliê, Avenida Liberdade, 70 - Jd. Nova Santa
+                    Paula, São Carlos - SP
+                  </p>
+                  <img
+                    src={map}
+                    alt="Mapa do endereço LaMonstera Ateliê"
+                    className="mt-5 h-[160px] w-full rounded-sm object-cover"
+                  />
+                </div>
+              </div>
+            </section>
+
+            <section
+              id="reporting"
+              className="relative z-10 scroll-mt-8 pt-14 lg:pt-20"
+            >
+              <div className="grid gap-7 lg:grid-cols-[360px_minmax(0,1fr)]">
+                <div>
+                  <h2 className={sectionTitle()}>Reporting</h2>
+                  <p className="mt-4 text-base leading-7 text-zinc-200">
+                    Indicadores simples para acompanhar agenda, procura por
+                    estilos e volume de projetos autorais.
+                  </p>
+                </div>
+                <div className="grid gap-4 md:grid-cols-3">
+                  {reportItems.map((item) => (
+                    <div className={featureCard()} key={item.label}>
+                      <p className="text-4xl font-bold text-white">
+                        {item.value}
+                      </p>
+                      <p className="mt-3 text-sm font-semibold text-zinc-300">
+                        {item.label}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+          </article>
+        </div>
       </section>
     </main>
   );
