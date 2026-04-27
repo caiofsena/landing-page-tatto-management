@@ -9,24 +9,19 @@ import {
   FileText,
   Home,
   Layers,
-  Menu,
   Moon,
   PanelLeftClose,
   PanelLeftOpen,
-  Search,
   ShieldCheck,
   SlidersHorizontal,
   Sparkles,
+  Sun,
   X,
 } from "lucide-react";
 import artist from "./assets/artist.png";
 import logo from "./assets/logo.png";
 import map from "./assets/map.png";
-import tattoo from "./assets/tattoo.png";
-
-const iconButton = tv({
-  base: "grid h-11 w-11 place-items-center text-white transition hover:text-zinc-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white",
-});
+import tattoo from "./assets/tattoo-1.png";
 
 const drawerItem = tv({
   base: "flex h-12 items-center gap-4 rounded-lg px-4 text-[16px] font-semibold text-studio-muted transition hover:bg-white/5 hover:text-white",
@@ -107,7 +102,7 @@ function Sidebar({
             onClick={onClose}
             aria-label="FloresLD"
           >
-            <img src={logo} alt="FloresLD" className="h-11 w-11" />
+            <img src={logo} alt="FloresLD" className="h-13 w-11" />
             <span
               className={`text-[24px] font-bold text-white transition lg:whitespace-nowrap ${
                 expanded ? "lg:opacity-100" : "lg:hidden lg:opacity-0"
@@ -131,21 +126,6 @@ function Sidebar({
             {expanded ? <PanelLeftClose size={23} /> : <PanelLeftOpen size={23} />}
           </button>
         </div>
-
-        <label
-          className={`mb-8 flex h-[54px] items-center gap-4 rounded-lg bg-zinc-800 px-4 text-zinc-400 transition ${
-            expanded ? "" : "lg:justify-center lg:px-0"
-          }`}
-        >
-          <Search size={23} className="text-white" />
-          <input
-            className={`min-w-0 flex-1 bg-transparent text-[16px] font-semibold outline-none placeholder:text-zinc-400 ${
-              expanded ? "" : "lg:hidden"
-            }`}
-            placeholder="Search"
-            type="search"
-          />
-        </label>
 
         <div className="space-y-4">
           {menuItems.map(({ label, href, icon: Icon }) => (
@@ -182,11 +162,25 @@ function Sidebar({
 function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const isDarkTheme = theme === "dark";
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-studio-ink">
+    <main
+      className={`h-screen overflow-hidden transition-colors duration-300 ${
+        isDarkTheme
+          ? "theme-dark bg-zinc-950 text-studio-ink"
+          : "theme-light bg-zinc-100 text-zinc-950"
+      }`}
+    >
       <section
-        className="min-h-screen w-full overflow-hidden bg-[radial-gradient(circle_at_16%_18%,rgba(38,103,24,0.55),transparent_22rem),radial-gradient(circle_at_84%_55%,rgba(28,95,24,0.25),transparent_26rem),linear-gradient(180deg,#000_0%,#000_18%,#002f08_100%)] shadow-2xl lg:grid lg:transition-[grid-template-columns] lg:duration-300"
+        className={`h-screen w-full overflow-hidden shadow-2xl transition-[background,grid-template-columns] duration-300 lg:grid 
+          ${
+            isDarkTheme
+              ? "bg-[radial-gradient(circle_at_16%_18%,rgba(38,103,24,0.55),transparent_22rem),radial-gradient(circle_at_84%_55%,rgba(28,95,24,0.25),transparent_26rem),linear-gradient(180deg,#000_0%,#000_18%,#002f08_100%)]"
+              : "bg-[radial-gradient(circle_at_16%_18%,rgba(163,230,53,0.32),transparent_24rem),radial-gradient(circle_at_84%_55%,rgba(34,197,94,0.16),transparent_26rem),linear-gradient(180deg,#fff_0%,#f5f7f1_48%,#dfead9_100%)]"
+          }
+        `}
         style={{
           gridTemplateColumns: sidebarExpanded
             ? "315px minmax(0, 1fr)"
@@ -200,27 +194,29 @@ function App() {
           onToggleExpanded={() => setSidebarExpanded((current) => !current)}
         />
 
-        <div className="min-w-0">
-          <header className="relative z-30 flex h-[58px] items-center justify-between px-4 lg:hidden">
+        <div className="h-screen min-w-0 overflow-y-auto">
+          <header
+            className={`sticky top-0 z-30 flex h-[58px] items-center justify-between px-4 backdrop-blur transition-colors duration-300 ${
+              isDarkTheme ? "bg-black/70" : "bg-white/40"
+            }`}
+          >
             <button
-              className={iconButton()}
-              aria-label="Abrir menu"
-              onClick={() => setDrawerOpen(true)}
+              className={`relative h-7 w-[58px] rounded-full p-0.5 shadow-inner transition-colors duration-300 ${
+                isDarkTheme ? "bg-zinc-600" : "bg-lime-200"
+              }`}
+              aria-label={`Alternar para tema ${isDarkTheme ? "claro" : "escuro"}`}
+              aria-pressed={!isDarkTheme}
+              onClick={() =>
+                setTheme((current) => (current === "dark" ? "light" : "dark"))
+              }
             >
-              <Menu size={28} strokeWidth={2.1} />
-            </button>
-
-            <button
-              className="relative h-7 w-[58px] rounded-full bg-zinc-600 pr-1 shadow-inner"
-              aria-label="Alternar tema"
-            >
-              <span className="grid h-7 w-7 place-items-center rounded-full bg-white text-zinc-950 shadow">
-                <Moon size={15} />
+              <span
+                className={`grid h-6 w-6 place-items-center rounded-full bg-white text-zinc-950 shadow transition-transform duration-300 ${
+                  isDarkTheme ? "translate-x-0" : "translate-x-[30px]"
+                }`}
+              >
+                {isDarkTheme ? <Moon size={15} /> : <Sun size={15} />}
               </span>
-            </button>
-
-            <button className={iconButton()} aria-label="Pesquisar">
-              <Search size={31} strokeWidth={2.4} />
             </button>
           </header>
 
@@ -228,12 +224,12 @@ function App() {
             <img
               src={logo}
               alt=""
-              className="pointer-events-none absolute left-2 top-[145px] h-[178px] w-[178px] select-none opacity-40 mix-blend-screen lg:left-12 lg:top-24 lg:h-[260px] lg:w-[260px]"
+              className="pointer-events-none absolute left-2 top-[145px] h-[178px] w-[178px] select-none mix-blend-screen lg:left-6 lg:top-1 lg:h-[240px] lg:w-[260px]"
             />
 
             <section
               id="inicio"
-              className="relative z-10 grid gap-8 lg:min-h-[620px] lg:grid-cols-[minmax(0,1fr)_390px] lg:items-center"
+              className="relative z-10 grid gap-8 lg:min-h-[680px] lg:grid-cols-[minmax(0,1fr)_390px] lg:items-center"
             >
               <div className="max-w-2xl">
                 <p className="mb-3 text-sm font-bold uppercase tracking-[0.18em] text-lime-300">
@@ -275,7 +271,7 @@ function App() {
 
             <section
               id="portfolio"
-              className="relative z-10 scroll-mt-8 pt-14 lg:grid lg:grid-cols-[360px_minmax(0,1fr)] lg:gap-12 lg:pt-20"
+              className="relative z-10 scroll-mt-8 pt-14 lg:grid lg:grid-cols-[160px_minmax(0,1fr)] lg:gap-5 lg:pt-10"
             >
               <div>
                 <h2 className={sectionTitle()}>Portifólio</h2>
