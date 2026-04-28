@@ -79,6 +79,7 @@ export function PortfolioPage() {
       "",
       `Tatuagem escolhida: ${selectedTattoo?.title || "Não selecionada"}`,
       `Descrição: ${selectedTattoo?.description || "Não informada"}`,
+      `Nome: ${field("client")}`,
       `Tamanho: ${field("size")} cm`,
       `Parte do corpo: ${field("bodyPart")}`,
       `Existe tatuagens próximas: ${field("nearbyTattoos")}`,
@@ -194,6 +195,10 @@ export function PortfolioPage() {
 
                 <form className="grid gap-4" onSubmit={handleSubmit}>
                   <div className="grid-flow-col">
+                    <label className="grid mb-4 gap-2 text-sm font-semibold text-zinc-200">
+                      Nome
+                      <input className="form-field" min="1" name="client" required type="text" />
+                    </label>
                     <label className="grid mb-4 gap-2 text-sm font-semibold text-zinc-200">
                       Tamanho (cm)
                       <input className="form-field" min="1" name="size" required type="number" />
