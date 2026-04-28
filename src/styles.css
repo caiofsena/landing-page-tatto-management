@@ -23,6 +23,26 @@ input {
   -webkit-tap-highlight-color: transparent;
 }
 
+.form-field {
+  min-height: 44px;
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  background: rgb(9 9 11 / 0.82);
+  padding: 0.75rem;
+  color: #ffffff;
+  outline: none;
+}
+
+.form-field::placeholder {
+  color: rgb(212 212 216 / 0.62);
+}
+
+.form-field:focus {
+  border-color: rgb(190 242 100 / 0.8);
+  box-shadow: 0 0 0 3px rgb(190 242 100 / 0.14);
+}
+
 .theme-light .bg-studio-panel {
   background-color: #f7f7f2;
 }
